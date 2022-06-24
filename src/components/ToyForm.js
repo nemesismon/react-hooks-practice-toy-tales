@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-function ToyForm() {
+function ToyForm({handleAddToy}) {
 
   const [newToy, setNewToy] = useState({
     "name": "",
@@ -25,7 +25,7 @@ function ToyForm() {
         body: JSON.stringify(newToy),
       })
       .then(response => response.json())
-      .then(data => console.log("i still need to be written FORM"))
+      .then(data => handleAddToy(data))
     setNewToy({
       "name": "",
       "image": "",

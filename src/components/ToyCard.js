@@ -1,40 +1,39 @@
-import React, {useState} from "react";
+import React from "react";
 
-function ToyCard({toy, handleToyDelete}) {
+function ToyCard({toy, handleToyDelete, handleToyLike}) {
 
-  const [like, setLike] = useState(false)
-  const [delToy, setDelToy] = useState([])
-
-  const handleDelete = () => {
-
+  const handleDelete = (toy) => {
+    console.log(toy)
+    // setDelToy(toy)
+    // console.log(delToy)
     fetch(`http://localhost:3001/toys/${toy.id}`, {
-      method: "DELETE"
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json"
+      }
     })
     .then(response => response.json())
-    .then((data) => setDelToy(data))
-    console.log(delToy)
-    handleToyDelete(delToy)
+    .then(() => {
+      handleToyDelete(toy)
+    })
   }
-
-  const handleLike = () => {
-    setLike(!like)
-    console.log(like)
-    if (like === true) {
-      const tempLikes = toy.likes + 1
+    
+  const handleLike = (toy) => {
+    const addLikes = toy.likes + 1
     fetch(`http://localhost:3001/toys/${toy.id}`, {
       method: "PATCH",
       headers: {
-      "Content-Type": "application/json"
+      "Content-type": "application/json"
       },
-      body: JSON.stringify({likes: tempLikes}),
+      body: JSON.stringify({likes: addLikes}),
     })
     .then(response => response.json())
-    .then(data => console.log("i still need to be written LIKES"))
-    }
+    .then(data => handleToyLike((data)))
   }
+  
 
   return (
-    <div className="card">
+    <div className="card" key={toy.id}>
       <h2>{toy.name}</h2>
       <img
         src={toy.image}
@@ -42,8 +41,8 @@ function ToyCard({toy, handleToyDelete}) {
         className="toy-avatar"
       />
       <p>{toy.likes} Likes </p>
-      <button className="like-btn" onClick={handleLike}>Like {"<3"}</button>
-      <button className="del-btn" onClick={handleDelete}>Donate to GoodWill</button>
+      <button className="like-btn" onClick={() => handleLike(toy)}>Like {"<3"}</button>
+      <button className="del-btn" onClick={() => handleDelete(toy)}>Donate to GoodWill</button>
     </div>
   );
 }

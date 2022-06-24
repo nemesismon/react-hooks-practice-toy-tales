@@ -7,7 +7,6 @@ import ToyContainer from "./ToyContainer";
 function App() {
   const [showForm, setShowForm] = useState(false);
   const [toys, setToys] = useState([])
-  const [deleteToy, setDeleteToy] = useState([])
 
   useEffect (() => {
     fetch("http://localhost:3001/toys")
@@ -20,18 +19,33 @@ function App() {
   }
 
   const handleToyDelete = (toy) => {
-    console.log(toy)
-    // setToys(toys.filter(toy => toyToDelete !== toy))
+    setToys(toys.filter(item => item.id !== toy.id))
   }
 
+  const handleToyLike = (toy) => {
+    const updatedToys = toys.map(item => {
+      if (item.id === toy.id) {
+        return toy
+      } else {
+        return item
+      }
+    })
+    setToys(updatedToys)
+  }
+
+  const handleAddToy = (toy) => {
+    console.log(toy)
+    setToys([...toys, toy])
+  }
+ 
   return (
     <>
       <Header />
-      {showForm ? <ToyForm setToys={setToys}/> : null}
+      {showForm ? <ToyForm handleAddToy={handleAddToy}/> : null}
       <div className="buttonContainer">
         <button onClick={handleClick}>Add a Toy</button>
       </div>
-      <ToyContainer toys={toys} handleToyDelete={handleToyDelete}/>
+      <ToyContainer toys={toys} handleToyDelete={handleToyDelete} handleToyLike={handleToyLike}/>
     </>
   );
 }
